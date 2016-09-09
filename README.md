@@ -18,8 +18,10 @@ clock of the main program of 200fps eg. 5ms.
 
 ## building
 
-This porject needs make, gnu avr toolchain and avrdude. To build the program
-just do:
+To build the source you need following requirements: make, gnu avr
+toolchain and avrdude.
+
+To build the program just do:
 
     make
 
@@ -27,4 +29,3 @@ or if you have the _usbtiny_ programmer just do:
 
     make upload FILE="pomodoro.hex"
 
-which will build and program your avr with the program.
