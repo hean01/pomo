@@ -1,6 +1,6 @@
 # pomo
 
-_pomo_ is a small AVR project thats help you to manage the pomodore
+_pomo_ is a small AVR project thats help you to manage the pomodoro
 method. [Pomodoro](https://en.wikipedia.org/wiki/Pomodoro_Technique)
 is a time management method to increase mental agility.
 
