@@ -341,19 +341,19 @@ reset:  wdr					; disable the watch dog reset flag
 	;;
 	clr ZH
 	ldi ZL, SRAM_ANIM_PAUSE
-	ldi TMP	, 0x06
-	st Z+	, TMP			       ; frame count
-	ldi TMP	, 0x01
+	ldi TMP	, 0x06				; frame count
 	st Z+	, TMP
-	ldi TMP	, 0x02
+	ldi TMP	, 0b00000001
 	st Z+	, TMP
-	ldi TMP	, 0x04
+	ldi TMP	, 0b00000010
 	st Z+	, TMP
-	ldi TMP	, 0x08
+	ldi TMP	, 0b00000100
 	st Z+	, TMP
-	ldi TMP	, 0x04
+	ldi TMP	, 0b00001000
 	st Z+	, TMP
-	ldi TMP	, 0x02
+	ldi TMP	, 0b00000100
+	st Z+	, TMP
+	ldi TMP	, 0b00000010
 	st Z+	, TMP
 
 	;;
@@ -363,9 +363,9 @@ reset:  wdr					; disable the watch dog reset flag
 	ldi ZL, SRAM_ANIM_START
 	ldi TMP, 0x2				; frame count
 	st Z+	, TMP
-	ldi TMP	, 0x0f
+	ldi TMP	, 0b00001111
 	st Z+	, TMP
-	ldi TMP	, 0x00
+	ldi TMP	, 0b00000000
 	st Z+	, TMP
 
 	;;
@@ -373,19 +373,19 @@ reset:  wdr					; disable the watch dog reset flag
 	;;
 	clr ZH
 	ldi ZL, SRAM_ANIM_DONE
-	ldi TMP	, 0x06
-	st Z+	, TMP			       ; frame count
-	ldi TMP	, 0x0e
+	ldi TMP	, 0x06				; frame count
 	st Z+	, TMP
-	ldi TMP	, 0x0d
+	ldi TMP	, 0b00001110
 	st Z+	, TMP
-	ldi TMP	, 0x0b
+	ldi TMP	, 0b00001101
 	st Z+	, TMP
-	ldi TMP	, 0x07
+	ldi TMP	, 0b00001011
 	st Z+	, TMP
-	ldi TMP	, 0x0b
+	ldi TMP	, 0b00000111
 	st Z+	, TMP
-	ldi TMP	, 0x0d
+	ldi TMP	, 0b00001011
+	st Z+	, TMP
+	ldi TMP	, 0b00001101
 	st Z+	, TMP
 
 	;;
