@@ -39,7 +39,7 @@
 	.equ TMP		, 0x10		; r16 - temporary
 	.equ TMP2		, 0x11		; r17 - temporary
 	.equ TICK_CNT		, 0x12		; r18 - tick counter
-	.equ DISPLAY		, 0x13  	; r19 - display
+	.equ DISPLAY		, 0x13		; r19 - display
 	.equ DISPLAY_BIT	, 0x14		; r20 - display bit
 	.equ STATE		, 0x15		; r21 - pomodoro state
 	.equ SECONDS		, 0x16		; r22 - seconds counter
