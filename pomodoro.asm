@@ -39,8 +39,8 @@
 	.equ TMP		, 0x10		; r16 - temporary
 	.equ TMP2		, 0x11		; r17 - temporary
 	.equ TICK_CNT		, 0x12		; r18 - tick counter
-	.equ LEDS		, 0x13  	; r19 - leds
-	.equ LEDS_BIT		, 0x14		; r20 - leds bit
+	.equ DISPLAY		, 0x13  	; r19 - display
+	.equ DISPLAY_BIT	, 0x14		; r20 - display bit
 	.equ STATE		, 0x15		; r21 - pomodoro state
 	.equ SECONDS		, 0x16		; r22 - seconds counter
 	.equ MINUTES		, 0x17		; r23 - minutes counter
@@ -122,17 +122,17 @@ button:	cpi STATE, 0x00				; do nothing if we are in startup state
 	lsl STATE				; advance state
 	sbrs STATE, STATE_POMODOROS_2		; check if we are in second pomodoro state
 	brne . + 4				; skip to next case if not equal
-	ldi LEDS, 0b00000011
+	ldi DISPLAY, 0b00000011
 	reti
 
 	sbrs STATE, STATE_POMODOROS_3
 	brne . + 4
-	ldi LEDS, 0b00000111
+	ldi DISPLAY, 0b00000111
 	reti
 
 	sbrs STATE, STATE_POMODOROS_4
 	brne . + 4
-	ldi LEDS, 0b00001111
+	ldi DISPLAY, 0b00001111
 	reti
 
 	;;
@@ -150,22 +150,22 @@ soft_reset:	ldi TMP, 0b00011000		; soft reset the program using watchdog timeout
 
 
 ;;;
-;;; render leds and clock the pomodoro process
+;;; render display and clock the pomodoro process
 ;;;
 ;;;   this is called for each 5ms of time passed eg. 200 fps,
 ;;;   each led is lit for 5ms at 200fps for lower current draw.
 ;;;
 ;;;   for each 200 frames (1 second) clock the pomodoro process
 ;;;
-tick:	mov TMP, LEDS				; get which led to display and its on/off state
-	and TMP, LEDS_BIT
+tick:	mov TMP, DISPLAY			; get which led to display and its on/off state
+	and TMP, DISPLAY_BIT
 	ori TMP, 0b00010000			; important to set other bits due to out instruction
 	out PORTB, TMP
 
-	lsl LEDS_BIT				; advance display to next led
-	cpi LEDS_BIT, (1 << 4)			; check if we reached end of cylce
+	lsl DISPLAY_BIT				; advance display of next led
+	cpi DISPLAY_BIT, (1 << 4)		; check if we reached end of cylce
 	brne . + 2				; skip if not equal
-	ldi LEDS_BIT, 0b00000001 		; reset cycle
+	ldi DISPLAY_BIT, 0b00000001 		; reset cycle
 
 	cpi ZL, 0x00				; skip animation if not loaded into Z registry
 	breq fin
@@ -174,7 +174,7 @@ tick:	mov TMP, LEDS				; get which led to display and its on/off state
 	cpi ANIM_TICK_CNT, 25
 	brne fin
 	clr ANIM_TICK_CNT
-	ld LEDS, Z+				; read anim frame into leds
+	ld DISPLAY, Z+				; read anim frame into display
 	inc ANIM_FRAME				; increase current frame
 	cp ANIM_FRAME, ANIM_FRAME_CNT 		; reset current frame if end is reached
 	brne fin
@@ -236,7 +236,7 @@ startup:
 	clr SECONDS				; reset clock and advance to next state
 	clr MINUTES
 	ldi STATE, (1 << STATE_POMODOROS_1) 	; setup next state, first pomodoro cycle
-	ldi LEDS, 0b00000001
+	ldi DISPLAY, 0b00000001
 	clr ZH
 	clr ZL
 	reti
@@ -329,8 +329,8 @@ reset:  wdr					; disable the watch dog reset flag
 	;;
 	;; intialize program registers
 	;;
-	clr LEDS
-	ldi LEDS_BIT, 0b00000001
+	clr DISPLAY
+	ldi DISPLAY_BIT, 0b00000001
 	clr TICK_CNT
 	clr SECONDS
 	clr MINUTES
