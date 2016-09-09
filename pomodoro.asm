@@ -23,40 +23,40 @@
 	;;
 	.equ PORTB	, 0x18
 	.equ DDRB	, 0x19
-	.equ TCCR0A 	, 0x2A		; Timer/Counter control register A
-	.equ TCCR0B	, 0x33		; Timer/Counter control register B
-	.equ OCR0A	, 0x29		; Output Compare Register A
-	.equ TIMSK 	, 0x39		; Timer/Counter interrupt Mask Register
-	.equ MCUCR	, 0x35		; MCU Control Register
-	.equ GIMSK	, 0x3b		; General Interrupt Mask Register
-	.equ PCMSK	, 0x15		; Pin Change Mask Register
-	.equ MCUSR	, 0x34		; MCU Status Register
-	.equ WDTCR	, 0x21		; Watchdog Timer Control Register
+	.equ TCCR0A 	, 0x2A			; Timer/Counter control register A
+	.equ TCCR0B	, 0x33			; Timer/Counter control register B
+	.equ OCR0A	, 0x29			; Output Compare Register A
+	.equ TIMSK 	, 0x39			; Timer/Counter interrupt Mask Register
+	.equ MCUCR	, 0x35			; MCU Control Register
+	.equ GIMSK	, 0x3b			; General Interrupt Mask Register
+	.equ PCMSK	, 0x15			; Pin Change Mask Register
+	.equ MCUSR	, 0x34			; MCU Status Register
+	.equ WDTCR	, 0x21			; Watchdog Timer Control Register
 
 	;;
 	;; general file registry
 	;;
-	.equ TMP		, 0x10	; r16 - temporary
-	.equ TMP2		, 0x11	; r17 - temporary
-	.equ TICK_CNT		, 0x12	; r18 - tick counter
-	.equ LEDS		, 0x13  ; r19 - leds
-	.equ LEDS_BIT		, 0x14	; r20 - leds bit
-	.equ STATE		, 0x15	; r21 - pomodoro state
-	.equ SECONDS		, 0x16	; r22 - seconds counter
-	.equ MINUTES		, 0x17	; r23 - minutes counter
-	.equ ANIM_FRAME		, 0x18  ; r24 - current frame in anim
-	.equ ANIM_FRAME_CNT	, 0x19	; r25 - frame in current anim
-	.equ ANIM_TICK_CNT	, 0x1a	; r26 - tick counter for animation frame
-	.equ CURRENT_ANIM	, 0x1b	; r27 - current animation
-	.equ ZL			, 0x1e	; r30 - low part of Z Register
-	.equ ZH			, 0x1f	; r31 - high part of Z Register
+	.equ TMP		, 0x10		; r16 - temporary
+	.equ TMP2		, 0x11		; r17 - temporary
+	.equ TICK_CNT		, 0x12		; r18 - tick counter
+	.equ LEDS		, 0x13  	; r19 - leds
+	.equ LEDS_BIT		, 0x14		; r20 - leds bit
+	.equ STATE		, 0x15		; r21 - pomodoro state
+	.equ SECONDS		, 0x16		; r22 - seconds counter
+	.equ MINUTES		, 0x17		; r23 - minutes counter
+	.equ ANIM_FRAME		, 0x18		; r24 - current frame in anim
+	.equ ANIM_FRAME_CNT	, 0x19		; r25 - frame in current anim
+	.equ ANIM_TICK_CNT	, 0x1a		; r26 - tick counter for animation frame
+	.equ CURRENT_ANIM	, 0x1b		; r27 - current animation
+	.equ ZL			, 0x1e		; r30 - low part of Z Register
+	.equ ZH			, 0x1f		; r31 - high part of Z Register
 
 	;;
 	;; SRAM pointers for led animations
 	;;
-	.equ SRAM_ANIM_PAUSE	, 0x60 	; address to pause animation
-	.equ SRAM_ANIM_START	, 0x6a 	; address to start animation
-	.equ SRAM_ANIM_DONE	, 0x74 	; address to done animation
+	.equ SRAM_ANIM_PAUSE	, 0x60 		; address to pause animation
+	.equ SRAM_ANIM_START	, 0x6a 		; address to start animation
+	.equ SRAM_ANIM_DONE	, 0x74 		; address to done animation
 
 	;;
 	;; pomodoro state enums
@@ -76,17 +76,17 @@
 ;;; setup interrupt vectors trampolines
 ;;;
 main:	.org 0x0000
-	rjmp reset			; reset interrupt vector
+	rjmp reset				; reset interrupt vector
 	reti
-	rjmp button			; pin change interrupt
-	reti
-	reti
+	rjmp button				; pin change interrupt
 	reti
 	reti
 	reti
 	reti
 	reti
-	rjmp tick			; timer0 overflow interrupt vector
+	reti
+	reti
+	rjmp tick				; timer0 overflow interrupt vector
 	reti
 	reti
 	reti
@@ -95,14 +95,14 @@ main:	.org 0x0000
 ;;;
 ;;; button interrupt handler
 ;;;
-button:	cpi STATE, 0x00			; do nothing if we are in startup state
-	brne . + 2			; skip if not equal
+button:	cpi STATE, 0x00				; do nothing if we are in startup state
+	brne . + 2				; skip if not equal
 	reti
 
-	cpi STATE, (1 << STATE_DONE)	; soft reset program if we are in done state
+	cpi STATE, (1 << STATE_DONE)		; soft reset program if we are in done state
 	breq soft_reset
 
-	mov TMP, STATE			; soft reset program if we are in a pomodoro state
+	mov TMP, STATE				; soft reset program if we are in a pomodoro state
 	andi TMP, 0b10101010
 	cpi TMP, 0x00
 	breq soft_reset
@@ -110,7 +110,7 @@ button:	cpi STATE, 0x00			; do nothing if we are in startup state
 	;;
 	;; take care of transition from PAUSE to next POMODOROS state
 	;;
-	clr SECONDS			; reset the pomodoro clock
+	clr SECONDS				; reset the pomodoro clock
 	clr MINUTES
 	clr ZL
 	clr ZH
@@ -119,9 +119,9 @@ button:	cpi STATE, 0x00			; do nothing if we are in startup state
 	;; advance to next pomodoro state and set corresponding
 	;; display of leds
 	;;
-	lsl STATE			; advance state
-	sbrs STATE, STATE_POMODOROS_2	; check if we are in second pomodoro state
-	brne . + 4			; skip to next case if not equal
+	lsl STATE				; advance state
+	sbrs STATE, STATE_POMODOROS_2		; check if we are in second pomodoro state
+	brne . + 4				; skip to next case if not equal
 	ldi LEDS, 0b00000011
 	reti
 
@@ -282,7 +282,7 @@ done:	reti
 ;;;   initialization code, called upon program start and through reset
 ;;;   switch and then enters the program main loop
 ;;;
-reset:  wdr				; disable the watch dog reset flag
+reset:  wdr					; disable the watch dog reset flag
 	clr TMP
 	out MCUSR, TMP
 	ldi TMP, 0b00011000
@@ -290,18 +290,18 @@ reset:  wdr				; disable the watch dog reset flag
 	ldi TMP, 0b00010000
 	out WDTCR, TMP
 
-	cli				; disable interrupts
+	cli					; disable interrupts
 
 	;;
 	;; setup timer and interrupt
 	;;
-	ldi TMP, 0b00000010		; clear on compare match
+	ldi TMP, 0b00000010			; clear on compare match
 	out TCCR0A, TMP
-	ldi TMP, 0b00000100		; set /256 prescaler
+	ldi TMP, 0b00000100			; set /256 prescaler
 	out TCCR0B, TMP
-	ldi TMP, 19			; (F_CPU / prescaler) / 200fps
+	ldi TMP, 19				; (F_CPU / prescaler) / 200fps
 	out OCR0A, TMP
-	ldi TMP, 0b00010000		; enable output compare match A interrupt
+	ldi TMP, 0b00010000			; enable output compare match A interrupt
 	out TIMSK, TMP
 
 	;;
@@ -315,9 +315,9 @@ reset:  wdr				; disable the watch dog reset flag
 	;;
 	;; setup PCINT4 interrupt
 	;;
-	ldi TMP, 0b00100000		; enable pin change interrupt
+	ldi TMP, 0b00100000			; enable pin change interrupt
 	out GIMSK, TMP
-	ldi TMP, 0b00010000		; enable PCINT4
+	ldi TMP, 0b00010000			; enable PCINT4
 	out PCMSK, TMP
 
 	;;
@@ -342,7 +342,7 @@ reset:  wdr				; disable the watch dog reset flag
 	clr ZH
 	ldi ZL, SRAM_ANIM_PAUSE
 	ldi TMP	, 0x06
-	st Z+	, TMP		       ; frame count
+	st Z+	, TMP			       ; frame count
 	ldi TMP	, 0x01
 	st Z+	, TMP
 	ldi TMP	, 0x02
@@ -361,7 +361,7 @@ reset:  wdr				; disable the watch dog reset flag
 	;;
 	clr ZH
 	ldi ZL, SRAM_ANIM_START
-	ldi TMP, 0x2			; frame count
+	ldi TMP, 0x2				; frame count
 	st Z+	, TMP
 	ldi TMP	, 0x0f
 	st Z+	, TMP
@@ -374,7 +374,7 @@ reset:  wdr				; disable the watch dog reset flag
 	clr ZH
 	ldi ZL, SRAM_ANIM_DONE
 	ldi TMP	, 0x06
-	st Z+	, TMP		       ; frame count
+	st Z+	, TMP			       ; frame count
 	ldi TMP	, 0x0e
 	st Z+	, TMP
 	ldi TMP	, 0x0d
@@ -398,11 +398,11 @@ reset:  wdr				; disable the watch dog reset flag
 	clr ANIM_FRAME
 	clr ANIM_TICK_CNT
 
-	sei				; enable interrupts
+	sei					; enable interrupts
 
 ;;;
 ;;; main loop
 ;;;
-loop:	sleep				; enter sleep
+loop:	sleep					; enter sleep
 	rjmp loop
 
